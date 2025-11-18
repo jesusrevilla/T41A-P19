@@ -35,7 +35,8 @@ Este proyecto consiste en el diseño e implementación de una base de datos en *
 ## Rúbrica del Proyecto
 | **Criterio**                                      | **Peso** |
 |---------------------------------------------------|---------|
-| Diseño del modelo relacional (tablas, relaciones, claves) | 20% |
+| Diseño del modelo relacional (tablas, relaciones, claves) | 10% |
+| Pruebas unitarias | 10% |
 | Implementación de CRUD para usuarios y roles      | 10% |
 | Procedimientos almacenados para alta de materia prima y productos | 10% |
 | Procedimiento para rotación y posicionamiento de figuras | 10% |
@@ -75,3 +76,7 @@ Este proyecto consiste en el diseño e implementación de una base de datos en *
     - Casos de prueba para cada módulo.
 11. **Documentación final**:
     - Manual técnico y de usuario.
+12. **Genera pruebas unitarias**:
+    - Para los procedimientos almacenados
+    - Las fucniones
+    - Triggers
