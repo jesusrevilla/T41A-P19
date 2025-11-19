@@ -1,8 +1,11 @@
+# =======================================================
+# db.py
+# Conexión a PostgreSQL y ejecución de scripts SQL
+# =======================================================
 
 import psycopg2
 import os
 
-# Configuración de la base de datos
 DB_CONFIG = {
     "dbname": "test_db",
     "user": "postgres",
@@ -12,7 +15,6 @@ DB_CONFIG = {
 }
 
 def run_sql_file(filename):
-    """Lee y ejecuta un archivo SQL."""
     print(f"\n>>> Ejecutando: {filename}")
 
     with open(filename, "r", encoding="utf-8") as file:
@@ -24,19 +26,19 @@ def run_sql_file(filename):
         cursor = conn.cursor()
 
         cursor.execute(sql_script)
-        print(f"✔ Archivo ejecutado correctamente: {filename}")
+
+        print(f"✔ OK: {filename}")
 
         cursor.close()
         conn.close()
 
     except Exception as e:
-        print(f"❌ Error ejecutando {filename}: {e}")
+        print(f"❌ Error en {filename}: {e}")
 
 
 if __name__ == "__main__":
-    # Carpeta donde están los SQL
-    BASE_PATH = os.path.join(os.getcwd(), "tests")
 
+    # SQL files están EN RAÍZ, no en /tests/
     files = [
         "01_create_tables.sql",
         "02_insert_data.sql",
@@ -46,6 +48,12 @@ if __name__ == "__main__":
     ]
 
     for f in files:
+        path = os.path.join(os.getcwd(), f)
+        if os.path.exists(path):
+            run_sql_file(path)
+        else:
+            print(f"⚠ Archivo no encontrado: {path}")
+
         path = os.path.join(BASE_PATH, f)
         if os.path.exists(path):
             run_sql_file(path)
