@@ -1,7 +1,3 @@
-# =======================================================
-# db.py
-# Conexión a PostgreSQL y ejecución de scripts SQL
-# =======================================================
 
 import psycopg2
 import os
@@ -14,32 +10,33 @@ DB_CONFIG = {
     "port": "5432"
 }
 
-def run_sql_file(filename):
-    print(f"\n>>> Ejecutando: {filename}")
-
-    with open(filename, "r", encoding="utf-8") as file:
-        sql_script = file.read()
+def run_sql_file(path):
+    """Leer y ejecutar un archivo SQL."""
+    print(f"\n>>> Ejecutando: {path}")
 
     try:
+        with open(path, "r", encoding="utf-8") as file:
+            sql_script = file.read()
+
         conn = psycopg2.connect(**DB_CONFIG)
         conn.autocommit = True
-        cursor = conn.cursor()
+        cur = conn.cursor()
 
-        cursor.execute(sql_script)
+        cur.execute(sql_script)
 
-        print(f"✔ OK: {filename}")
+        print(f"✔ OK: {path}")
 
-        cursor.close()
+        cur.close()
         conn.close()
 
     except Exception as e:
-        print(f"❌ Error en {filename}: {e}")
+        print(f"❌ Error en {path}: {e}")
 
 
 if __name__ == "__main__":
 
-    # SQL files están EN RAÍZ, no en /tests/
-    files = [
+    # Los SQL están en la raíz del proyecto
+    sql_files = [
         "01_create_tables.sql",
         "02_insert_data.sql",
         "03_functions_and_procedures.sql",
@@ -47,15 +44,12 @@ if __name__ == "__main__":
         "05_test_queries.sql"
     ]
 
-    for f in files:
-        path = os.path.join(os.getcwd(), f)
-        if os.path.exists(path):
-            run_sql_file(path)
-        else:
-            print(f"⚠ Archivo no encontrado: {path}")
+    project_root = os.getcwd()
 
-        path = os.path.join(BASE_PATH, f)
-        if os.path.exists(path):
-            run_sql_file(path)
+    for filename in sql_files:
+        full_path = os.path.join(project_root, filename)
+
+        if os.path.exists(full_path):
+            run_sql_file(full_path)
         else:
-            print(f"⚠ Archivo no encontrado: {path}")
+            print(f"⚠ Archivo no encontrado: {full_path}")
