@@ -48,10 +48,18 @@ jobs:
           sleep 2
         done
 
-    - name: Run SQL setup (db.py)
+    - name: Run SQL setup using db.py
       env:
         PGHOST: localhost
         PGUSER: postgres
         PGPASSWORD: postgres
         PGDATABASE: test_db
       run: python db.py
+
+    - name: Run Python tests (test_proyecto.py)
+      env:
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        PGDATABASE: test_db
+      run: python tests/test_proyecto.py
