@@ -31,7 +31,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.X'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
@@ -39,10 +39,9 @@ jobs:
         pip install -r requirements.txt      
 
     - name: Wait for PostgreSQL
-      run: |
-        sleep 10
+      run: sleep 10
 
-    - name: Set up database schema and data
+    - name: Create tables
       run: |
         PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
 
@@ -50,10 +49,15 @@ jobs:
       run: |
         PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql      
 
-    - name: Query data
+    - name: Create functions & procedures
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_query_data.sql          
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_functions_and_procedures.sql          
 
-    - name: Run unit tests
+    - name: Create triggers
       run: |
-        pytest -vv
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 04_triggers.sql
+    - name: Optional queries
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 05_test_queries.sql
+    - name: Run unit tests
+      run: pytest -vv
