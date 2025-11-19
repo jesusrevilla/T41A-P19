@@ -49,9 +49,10 @@ CREATE TABLE piezas (
 CREATE TABLE geometrias (
     id SERIAL PRIMARY KEY,
     pieza_id INT REFERENCES piezas(id),
-    tipo TEXT NOT NULL, -- recta, arco, figura
-    datos JSONB NOT NULL
+    datos JSONB NOT NULL,
+    metadata JSONB DEFAULT '{}'::jsonb
 );
+
 
 -- EVENTOS JSON
 CREATE TABLE eventos (
