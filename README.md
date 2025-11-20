@@ -78,5 +78,5 @@ Este proyecto consiste en el diseño e implementación de una base de datos en *
     - Manual técnico y de usuario.
 12. **Genera pruebas unitarias**:
     - Para los procedimientos almacenados
-    - Las fucniones
+    - Las funciones
     - Triggers
