@@ -29,6 +29,7 @@ CREATE TABLE producto (
 CREATE TABLE pieza (
   id SERIAL PRIMARY KEY,
   producto_id INTEGER NOT NULL,
+  nombre_pieza TEXT NOT NULL,
   descripcion TEXT NOT NULL,
   cantidad_elementos INTEGER NOT NULL,
   FOREIGN KEY (producto_id) REFERENCES producto(id)
