@@ -4,10 +4,6 @@ CREATE TABLE rol (
   rol_nombre TEXT NOT NULL
 );
 
-INSERT INTO rol (rol_nombre) VALUES 
-('administrador'),
-('operador');
-
 CREATE TABLE usuario (
   id SERIAL PRIMARY KEY,
   nombre TEXT NOT NULL,
