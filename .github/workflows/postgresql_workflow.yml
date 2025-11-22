@@ -1,4 +1,4 @@
-name: Run PostgreSQL Tests
+name: Run Cut Optimization System
 
 on:
   push:
@@ -36,24 +36,34 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt      
+        pip install -r requirements.txt
 
     - name: Wait for PostgreSQL
       run: |
         sleep 10
 
-    - name: Set up database schema and data
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
+   
+    - name: 01 Esquema
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/01_esquema_tablas.sql
 
-    - name: Insert data
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql      
+    - name: 02 Seguridad
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/02_seguridad_roles.sql
 
-    - name: Query data
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_query_data.sql          
+    - name: 03 CRUD
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/03_funciones_crud.sql
 
-    - name: Run unit tests
-      run: |
-        pytest -vv
+    - name: 04 Alta
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/04_procedimientos_alta.sql
+
+    - name: 05 Logica
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/05_logica_negocio.sql
+
+    - name: 06 Calculos
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/06_calculos.sql
+
+    - name: 07 Triggers
+      run: PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ${{ github.workspace }}/07_triggers.sql
+
+    # Pruebas unitarias
+    - name: Run tests
+      run: pytest tests/test_proyecto.py
