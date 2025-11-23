@@ -16,10 +16,17 @@ def test_alta_usuario(conn):
     cantidad = cur.fetchone()[0]
     assert cantidad == 1
 
+
 def test_calcular_utilizacion(conn):
     cur = conn.cursor()
 
+    # Crear materia prima
     cur.execute("INSERT INTO materia_prima(id,numero_parte,ancho,alto) VALUES (1,'MP-01',100,100);")
+
+    # Crear producto requerido por piezas
+    cur.execute("INSERT INTO productos(id,numero_parte) VALUES (1,'PROD-01');")
+
+    # Crear piezas del producto
     cur.execute("INSERT INTO piezas(id,id_producto,area) VALUES (1,1,2500);")
     cur.execute("INSERT INTO piezas(id,id_producto,area) VALUES (2,1,2500);")
 
@@ -28,14 +35,21 @@ def test_calcular_utilizacion(conn):
 
     assert valor == 0.5  # 5000 / 10000
 
+
 def test_rotar_posicionar(conn):
     cur = conn.cursor()
 
+    # Crear producto y pieza
+    cur.execute("INSERT INTO productos(id,numero_parte) VALUES (1,'PROD-01');")
+    cur.execute("INSERT INTO piezas(id,id_producto,area) VALUES (1,1,100);")
+
+    # Crear geometría base
     cur.execute("""
         INSERT INTO geometrias(id,id_pieza,datos)
-        VALUES (1,1,'{"x":0,"y":0,"angulo":0}'::json);
+        VALUES (1,1,'{\"x\":0,\"y\":0,\"angulo\":0}'::json);
     """)
 
+    # Llamar al SP
     cur.execute("""
         CALL sp_rotar_posicionar_figuras(1,45,10,20,'{"evento":"rotar"}');
     """)
