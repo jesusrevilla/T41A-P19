@@ -1,8 +1,8 @@
 # Proyecto: Sistema de Optimización de Corte de Materia Prima en PostgreSQL
 
 ## Integrantes:
-- ** González Narváez Juan Pablo - 179804
-- ** López Lara Rafael - 182239
+- **González Narváez Juan Pablo - 179804**
+- **López Lara Rafael - 182239**
 
 ## Descripción del Proyecto
 Este proyecto consiste en el diseño e implementación de una base de datos en **PostgreSQL** para optimizar el corte de materia prima laminar (madera, chapa metálica, tela, etc.). El sistema permitirá:
