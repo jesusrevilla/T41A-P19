@@ -16,7 +16,8 @@ CREATE TABLE materia_prima (
   ancho NUMERIC NOT NULL,
   alto NUMERIC NOT NULL,
   distancia_minima_entre_piezas NUMERIC NOT NULL,
-  distancia_minima_a_orilla NUMERIC NOT NULL
+  distancia_minima_a_orilla NUMERIC NOT NULL,
+  area_total_mm2 NUMERIC(15,2) GENERATED ALWAYS AS (largo_mm * ancho_mm) STORED
 );
 
 CREATE TABLE producto (
