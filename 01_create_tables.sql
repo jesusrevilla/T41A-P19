@@ -56,7 +56,7 @@ CREATE TABLE evento (
   id_usuario INT REFERENCES usuario (id) NOT NULL,
   fecha_hora TIMESTAMP NOT NULL,
   tipo_evento TEXT NOT NULL,
-  Descripcion TEXT NOT NULL
+  Descripcion JSONB NOT NULL
 );
 
 CREATE TABLE cortes_planificados (
