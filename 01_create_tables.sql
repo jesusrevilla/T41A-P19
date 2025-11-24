@@ -45,5 +45,9 @@ CREATE TABLE geometria (
 
 CREATE TABLE evento (
   id SERIAL PRIMARY KEY,
-
+  id_materiap INT REFENRENCES materia_prima(id),
+  id_usuario INT REFENRENCES usuario (id),
+  fecha_hora TIMESTAMP,
+  tipo_evento TEXT,
+  Descripcion TEXT
 );*/
