@@ -41,6 +41,10 @@ jobs:
     - name: Wait for PostgreSQL
       run: |
         sleep 10
+        
+    - name: Configuration
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f configuration.sql
 
     - name: Set up database schema and data
       run: |
