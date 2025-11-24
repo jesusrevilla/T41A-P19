@@ -1,18 +1,10 @@
 --PROCEDIMIENTO ALTA DE MATERIA PRIMA
 --Secuencia para generación de numero de parte
 CREATE SEQUENCE num_materiap_aum
-START 1
-INCREMENT 1
-MINVALUE 1;
+START 1 INCREMENT 1 MINVALUE 1;
 --Procedimiento de alta
-CREATE OR REPLACE PROCEDURE alta_materia_prima(
-    ancho NUMERIC,
-    alto NUMERIC,
-    dist_min_piezas NUMERIC,
-    dist_min_orilla NUMERIC
-)
-LANGUAGE plpgsql
-AS $$
+CREATE PROCEDURE alta_materia_prima(ancho NUMERIC,alto NUMERIC,dist_min_piezas NUMERIC,dist_min_orilla NUMERIC)
+LANGUAGE plpgsql AS $$
 DECLARE
     num_nuevo INT;
     num_completo TEXT;
@@ -21,16 +13,8 @@ BEGIN
 
     num_completo := 'NUM-' || LPAD(num_nuevo::TEXT, 4, '0');
 
-    INSERT INTO materia_prima (
-        num_parte, ancho, alto,
-        distancia_minima_entre_piezas,
-        distancia_minima_a_orilla
-    )
-    VALUES (
-        num_completo, ancho, alto,
-        dist_min_piezas, dist_min_orilla
-    );
-
+    INSERT INTO materia_prima (num_parte, ancho, alto,distancia_minima_entre_piezas,distancia_minima_a_orilla)
+    VALUES (num_completo, ancho, alto,dist_min_piezas, dist_min_orilla);
 END;
 $$;
 
@@ -40,23 +24,15 @@ CALL alta_materia_prima(300, 260, 4, 11);
 SELECT * FROM materia_prima;
 
 --PROCEDIMIENTO DE ALTA DE PRODUCTO 
-CREATE OR REPLACE PROCEDURE alta_producto(
-    nombre TEXT,
-    descripcion TEXT,
-    geometria BOX,
-    piezas JSONB
-)
-LANGUAGE plpgsql
-AS $$
+CREATE PROCEDURE alta_producto(nombre TEXT,descripcion TEXT,geometria BOX,piezas JSONB )
+LANGUAGE plpgsql AS $$
 DECLARE
     producto_id INT;
     pieza_arreglo JSONB;
     pieza_id INT;
-
 BEGIN
     --Inserar producto
-    INSERT INTO producto (nombre, descripcion, geometria)
-    VALUES (nombre, descripcion, geometria)
+    INSERT INTO producto (nombre, descripcion, geometria) VALUES (nombre, descripcion, geometria)
     RETURNING id INTO producto_id;
 
     --Cada producto tiene sus piezas y geometrias
@@ -64,62 +40,35 @@ BEGIN
     LOOP
         --Insertar piezas
         INSERT INTO pieza (producto_id, nombre_pieza, descripcion, cantidad_elementos)
-        VALUES (
-            producto_id,
-            pieza_arreglo->>'nombre_pieza',
-            pieza_arreglo->>'descripcion',
-            (pieza_arreglo->>'cantidad_elementos')::INT
-        )
+        VALUES ( producto_id, pieza_arreglo->>'nombre_pieza', pieza_arreglo->>'descripcion', (pieza_arreglo->>'cantidad_elementos')::INT)
         RETURNING id INTO pieza_id;
 
         --Insertar geometría
         INSERT INTO geometrias (id_pieza, forma_geometrica)
-        VALUES (
-            pieza_id,
-            (pieza_arreglo->>'geometria')::POLYGON
-        );
+        VALUES (pieza_id, (pieza_arreglo->>'geometria')::POLYGON);
     END LOOP;
 END;
 $$;
-CALL alta_producto(
-    'Omnitrix',
-    'Producto espacial',
-    box(point(0,0), point(10,5)), 
-    '[
-        {
-            "nombre_pieza": "Correa",
-            "descripcion": "Soporte",
-            "cantidad_elementos": 2,
-            "geometria": "((0,0),(5,0),(5,3),(0,3))"
-        },
-        {
-            "nombre_pieza": "Reloj",
-            "descripcion": "Mecánico",
-            "cantidad_elementos": 1,
-            "geometria": "((0,0),(4,0),(4,2),(0,2))"
-        }
-    ]'
-);
+CALL alta_producto('Omnitrix','Producto espacial',box(point(0,0), point(10,5)), 
+    '[{"nombre_pieza": "Correa",
+       "descripcion": "Soporte",
+       "cantidad_elementos": 2,
+       "geometria": "((0,0),(5,0),(5,3),(0,3))"},
+        {"nombre_pieza": "Reloj",
+         "descripcion": "Mecánico",
+         "cantidad_elementos": 1,
+         "geometria": "((0,0),(4,0),(4,2),(0,2))"}]');
 
-CALL alta_producto(
-    'La caja',
-    'Producto cajil',
-    box(point(0,0), point(10,5)), 
-    '[
-        {
-            "nombre_pieza": "Tapa",
-            "descripcion": "Cubierta",
-            "cantidad_elementos": 2,
-            "geometria": "((0,0),(5,0),(5,3),(0,3))"
-        },
-        {
-            "nombre_pieza": "Recipiente",
-            "descripcion": "Contenedor",
-            "cantidad_elementos": 1,
-            "geometria": "((0,0),(4,0),(4,2),(0,2))"
-        }
-    ]'
-);
+CALL alta_producto('La caja','Producto cajil',box(point(0,0), point(10,5)), 
+    '[{"nombre_pieza": "Tapa",
+       "descripcion": "Cubierta",
+       "cantidad_elementos": 2,
+       "geometria": "((0,0),(5,0),(5,3),(0,3))"},
+        {"nombre_pieza": "Recipiente",
+         "descripcion": "Contenedor",
+         "cantidad_elementos": 1,
+         "geometria": "((0,0),(4,0),(4,2),(0,2))"}]');
+
 SELECT * FROM producto;
 SELECT * FROM pieza;
 SELECT * FROM geometrias;
