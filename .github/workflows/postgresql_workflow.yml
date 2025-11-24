@@ -54,9 +54,17 @@ jobs:
       run: |
         PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql      
 
-    - name: Query data
+    - name: CRUD functions
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_query_data.sql          
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f functions_CRUD.sql     
+
+    - name: Procedimientos
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f procedimiento.sql   
+
+    - name: Funciones
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f functions.sql     
 
     - name: Run unit tests
       run: |
