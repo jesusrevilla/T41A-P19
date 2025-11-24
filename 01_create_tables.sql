@@ -13,6 +13,7 @@ CREATE TABLE usuario (
 
 CREATE TABLE materia_prima (
   id SERIAL PRIMARY KEY,
+  num_parte VARCHAR(50) UNIQUE NOT NULL,
   ancho NUMERIC NOT NULL,
   alto NUMERIC NOT NULL,
   distancia_minima_entre_piezas NUMERIC NOT NULL,
