@@ -1,3 +1,4 @@
+
 # test.py
 import os
 import sys
@@ -35,6 +36,9 @@ def run_sql(cur, path):
     cur.execute(sql)
 
 def main():
+    # Permite saltar la ejecución de FILES si ya corriste los .sql con psql
+    skip_sql = os.getenv("SKIP_SQL", "0") == "1"
+
     try:
         conn = get_conn()
         conn.autocommit = False
@@ -44,10 +48,13 @@ def main():
 
     try:
         with conn.cursor() as cur:
-            for f in FILES:
-                run_sql(cur, f)
-                conn.commit()
-                print(f"OK: {f}")
+            if not skip_sql:
+                for f in FILES:
+                    run_sql(cur, f)
+                    conn.commit()
+                    print(f"OK: {f}")
+            else:
+                print("SKIP_SQL=1 → Omitiendo ejecución de archivos SQL en test.py")
 
             # Verificación adicional: leer utilización calculada
             cur.execute("""
@@ -68,7 +75,8 @@ def main():
             ok = 0
             for name, success, details in rows:
                 status = "OK" if success else "FAIL"
-                if success: ok += 1
+                if success:
+                    ok += 1
                 print(f" - {status}: {name} -> {details}")
             print(f"\nPasadas: {ok}/{len(rows)}")
 
