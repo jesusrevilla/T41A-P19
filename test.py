@@ -4,8 +4,8 @@ import sys
 import psycopg2
 
 FILES = [
-    "01_crear_tablas.sql",
-    "02_insertar_datos.sql",
+    "01_create_tables.sql",
+    "02_insert_data.sql",
     "03_crud_usuarios_roles.sql",
     "04_funciones_geom_y_utilizacion.sql",
     "05_procedimientos.sql",
