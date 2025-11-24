@@ -45,8 +45,8 @@ jobs:
     - name: Initialize Database and Apply Security
       run: |
         export PGPASSWORD=postgres
-        psql -h localhost -U postgres -d test_db -f 01_schema_ddl.sql
-        psql -h localhost -U postgres -d test_db -f 02_funcs_usuarios.sql
+        psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
+        psql -h localhost -U postgres -d test_db -f 02_func_CRUD.sql
         psql -h localhost -U postgres -d test_db -f 03_funcs_inventario.sql
         psql -h localhost -U postgres -d test_db -f 04_funcs_logica.sql
         psql -h localhost -U postgres -d test_db -f 05_triggers.sql
