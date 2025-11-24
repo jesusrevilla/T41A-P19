@@ -62,7 +62,7 @@ def test_2_inventario_complejo(db_conn):
     assert dims['ancho'] == 1500
 
     geo_json = json.dumps({"ancho": 1000, "alto": 1000})
-    cur.execute(f"CALL sp_alta_producto_completo('PROD-MESA', 'Mesa Industrial', 'Tapa', 1, 'RECTANGULO', '{geo_json}');")
+    cur.execute(f"CALL sp_alta_producto_completo('PROD-MESA', 'Mesa Industrial', 'Tapa', 1, 'POLIGONO', '{geo_json}');")
 
     cur.execute("""
         SELECT p.numero_parte, pi.nombre_pieza, gp.tipo_segmento 
