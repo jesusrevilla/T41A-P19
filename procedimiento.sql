@@ -1,3 +1,44 @@
+--PROCEDIMIENTO ALTA DE MATERIA PRIMA
+--Secuencia para generación de numero de parte
+CREATE SEQUENCE num_materiap_aum
+START 1
+INCREMENT 1
+MINVALUE 1;
+--Procedimiento de alta
+CREATE OR REPLACE PROCEDURE alta_materia_prima(
+    ancho NUMERIC,
+    alto NUMERIC,
+    dist_min_piezas NUMERIC,
+    dist_min_orilla NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    num_nuevo INT;
+    num_completo TEXT;
+BEGIN
+    num_nuevo := nextval('num_materiap_aum');
+
+    num_completo := 'NUM-' || LPAD(num_nuevo::TEXT, 4, '0');
+
+    INSERT INTO materia_prima (
+        num_parte, ancho, alto,
+        distancia_minima_entre_piezas,
+        distancia_minima_a_orilla
+    )
+    VALUES (
+        num_completo, ancho, alto,
+        dist_min_piezas, dist_min_orilla
+    );
+
+END;
+$$;
+
+CALL alta_materia_prima(200, 300, 5, 10);
+CALL alta_materia_prima(300, 260, 4, 11);
+
+SELECT * FROM materia_prima;
+
 -- FUNCIÓN CRÍTICA DE VALIDACIÓN (USANDO TIPOS NATIVOS)
 CREATE OR REPLACE FUNCTION fn_validar_colocacion_nativo(
     p_id_geometria_original INT,     -- ID de la geometría base (para identificación)
