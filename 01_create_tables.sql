@@ -37,16 +37,23 @@ CREATE TABLE pieza (
   FOREIGN KEY (producto_id) REFERENCES producto(id)
 );
 
-/*
-CREATE TABLE geometria (
-  id SERIAL PRIMARY KEY,
-
-);*/
+CREATE TABLE geometrias (
+    id_geometria SERIAL PRIMARY KEY,
+    id_pieza INT NOT NULL,
+    -- Aquí usamos el tipo nativo de PostgreSQL
+    -- Usamos 'POLYGON' porque permite calcular áreas para tu función de utilización
+    forma_geometrica POLYGON NOT NULL,
+    -- Metadatos útiles para optimización
+    es_figura_cerrada BOOLEAN DEFAULT TRUE,
+    -- Relación: Si borras la pieza, se borra su geometría
+    CONSTRAINT fk_pieza FOREIGN KEY (id_pieza) 
+    REFERENCES pieza(id) ON DELETE CASCADE
+);
 
 CREATE TABLE evento (
   id SERIAL PRIMARY KEY NOT NULL,
-  id_materiap INT REFENRENCES materia_prima(id) NOT NULL,
-  id_usuario INT REFENRENCES usuario (id) NOT NULL,
+  id_materiap INT REFERENCES materia_prima(id) NOT NULL,
+  id_usuario INT REFERENCES usuario (id) NOT NULL,
   fecha_hora TIMESTAMP NOT NULL,
   tipo_evento TEXT NOT NULL,
   Descripcion TEXT NOT NULL
