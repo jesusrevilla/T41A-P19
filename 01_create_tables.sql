@@ -41,13 +41,13 @@ CREATE TABLE pieza (
 CREATE TABLE geometria (
   id SERIAL PRIMARY KEY,
 
-);
+);*/
 
 CREATE TABLE evento (
-  id SERIAL PRIMARY KEY,
-  id_materiap INT REFENRENCES materia_prima(id),
-  id_usuario INT REFENRENCES usuario (id),
-  fecha_hora TIMESTAMP,
-  tipo_evento TEXT,
-  Descripcion TEXT
-);*/
+  id SERIAL PRIMARY KEY NOT NULL,
+  id_materiap INT REFENRENCES materia_prima(id) NOT NULL,
+  id_usuario INT REFENRENCES usuario (id) NOT NULL,
+  fecha_hora TIMESTAMP NOT NULL,
+  tipo_evento TEXT NOT NULL,
+  Descripcion TEXT NOT NULL
+);
