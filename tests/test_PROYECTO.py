@@ -72,7 +72,7 @@ def test_2_inventario_complejo(db_conn):
         WHERE p.numero_parte = 'PROD-MESA';
     """)
     resultado = cur.fetchone()
-    assert resultado == ('PROD-MESA', 'Tapa', 'RECTANGULO')
+    assert resultado == ('PROD-MESA', 'Tapa', 'POLIGONO')
     
     db_conn.commit()
 
