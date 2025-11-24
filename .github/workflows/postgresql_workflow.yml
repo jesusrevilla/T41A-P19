@@ -1,3 +1,4 @@
+
 name: Run PostgreSQL Tests
 
 on:
@@ -9,6 +10,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:14
@@ -19,61 +21,85 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres -d test_db"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: List repo (debug)
+        run: |
+          pwd
+          ls -la
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Wait for PostgreSQL
-      run: sleep 10
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Create tables
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U postgres -d test_db && break
+            echo "Esperando Postgres..."; sleep 2
+          done
 
-    - name: Insert data
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql      
+      # Ejecuta los archivos SQL (asegúrate que los nombres/rutas existan en la raíz del repo)
+      - name: Create tables
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
 
-    - name: Crud  usuarios roles
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_crud_usuarios_roles.sql          
+      - name: Insert data
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql
 
-    - name: funciones geom y utilizacion
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 04_funciones_geom_y_utilizacion.sql
-    - name: Procedimientos
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 05_procedimientos.sql
+      - name: CRUD usuarios y roles
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_crud_usuarios_roles.sql
 
-    - name: Create triggers
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 06_triggers.sql
+      - name: Funciones geom y utilizacion
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 04_funciones_geom_y_utilizacion.sql
 
-    - name: Eventos json
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 07_eventos_json.sql
-        
-    - name: Seguridad
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 08_seguridad.sql
+      - name: Procedimientos
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 05_procedimientos.sql
 
-    - name: Pruebas initarias
-      run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 09_pruebas_unitarias.sql
-    - name: Run unit tests
-      run: pytest -vv
+      - name: Create triggers
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 06_triggers.sql
+
+      - name: Eventos JSON
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 07_eventos_json.sql
+
+      - name: Seguridad
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 08_seguridad.sql
+
+      - name: Pruebas unitarias SQL
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 09_pruebas_unitarias.sql
+
+      # Ejecuta tu script Python principal para validar y mostrar resultados
+      - name: Run test.py
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: test_db
+          PGUSER: postgres
+          PGPASSWORD: postgres
+        run: python test.py
+
+      # Si tienes pruebas en pytest dentro de /tests, se ejecutan aquí.
+      # Si aún no tienes pruebas de PyTest, puedes quitar este paso o hacerlo no bloqueante con "|| true".
+      - name: Run pytest
+        run: pytest -vv
