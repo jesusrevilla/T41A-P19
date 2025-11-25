@@ -64,7 +64,11 @@ jobs:
 
     - name: Funciones
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f functions.sql     
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f functions.sql 
+
+    - name: Triggers
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f triggers.sql 
 
     - name: Run unit tests
       run: |
