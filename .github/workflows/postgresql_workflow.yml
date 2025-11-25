@@ -54,6 +54,6 @@ jobs:
       run: |
         PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_query_data.sql          
 
-    - name: Run unit tests
+    - name: Run Python unit tests
       run: |
-        pytest -vv
+        pytest -vv tests/test_logic.py
