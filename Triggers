@@ -15,3 +15,8 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER t_validar_geometria_colocacion
+BEFORE INSERT OR UPDATE ON geometrias
+FOR EACH ROW
+EXECUTE FUNCTION tr_validar_colocacion();
