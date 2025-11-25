@@ -63,12 +63,13 @@ CREATE TABLE cortes_planificados (
   id SERIAL PRIMARY KEY,
   id_materia INT NOT NULL,
   id_pieza INT NOT NULL,
-  
+  id_usuario INT,
   -- Esta columna guarda la figura YA ROTADA y en su posición final (X, Y)
   geometria_final POLYGON NOT NULL, 
   
   fecha_asignacion TIMESTAMP DEFAULT NOW(),
 
   FOREIGN KEY (id_materia) REFERENCES materia_prima(id),
-  FOREIGN KEY (id_pieza) REFERENCES pieza(id)
+  FOREIGN KEY (id_pieza) REFERENCES pieza(id),
+  FOREIGN KEY (id_usuario) REFERENCES usuario(id)
 );
