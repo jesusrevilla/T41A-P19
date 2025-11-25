@@ -1,0 +1,77 @@
+CREATE OR REPLACE FUNCTION fn_registrar_ajuste_corte(
+    p_id_corte_planificado INT,
+    p_tipo_evento TEXT, 
+    p_id_usuario INT,
+    p_payload JSONB
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+    v_id_materia INT;
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM cortes_planificados WHERE id = p_id_corte_planificado) THEN
+        RAISE EXCEPTION 'El corte planificado con ID % no existe.', p_id_corte_planificado;
+    END IF;
+
+    SELECT id_materia INTO v_id_materia
+    FROM cortes_planificados
+    WHERE id = p_id_corte_planificado;
+    
+    INSERT INTO evento (id_materiap, id_usuario, fecha_hora, tipo_evento, descripcion)
+    VALUES (
+        v_id_materia,
+        p_id_usuario,
+        NOW(),
+        p_tipo_evento,
+        p_payload || jsonb_build_object(
+            'corte_id', p_id_corte_planificado,
+            'fecha_ajuste', to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')
+        )
+    );
+
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION tr_recalcular_aprovechamiento_y_registrar()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_utilizacion NUMERIC(5,2);
+    v_id_materia INT;
+    v_corte_id INT;
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        v_id_materia := NEW.id_materia;
+        v_corte_id := NEW.id;
+    ELSIF TG_OP = 'DELETE' THEN
+        v_id_materia := OLD.id_materia;
+        v_corte_id := OLD.id;
+    ELSE
+        RETURN NULL;
+    END IF;
+
+    v_utilizacion := fn_calcular_utilizacion(v_id_materia);
+
+    INSERT INTO evento (id_materiap, id_usuario, fecha_hora, tipo_evento, descripcion)
+    VALUES (
+        v_id_materia,
+        1, -- Asumimos usuario 1 (Admin/Sistema) para operaciones automáticas
+        NOW(),
+        'UTILIZACION_ACTUALIZADA',
+        jsonb_build_object(
+            'utilizacion_porcentaje', v_utilizacion,
+            'operacion_corte', TG_OP,
+            'corte_id_afectado', v_corte_id
+        )
+    );
+
+    RETURN NULL; 
+END;
+$$;
+
+CREATE TRIGGER tr_utilizacion_auto_registro
+AFTER INSERT OR DELETE ON cortes_planificados
+FOR EACH ROW
+EXECUTE FUNCTION tr_recalcular_aprovechamiento_y_registrar();
