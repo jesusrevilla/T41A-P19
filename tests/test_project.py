@@ -108,29 +108,35 @@ def test_logica_corte_valido(cursor):
     assert cursor.fetchone()['total'] == 1
 
 def test_logica_colision_trigger(cursor):
-    """Prueba que el TRIGGER bloquee una colisión."""
-    
-    # 1. Setup (Mismo que el anterior)
+    """Prueba que el TRIGGER bloquee una colisión (Insert directo)."""
+    # 1. SETUP (Igual que antes)
     cursor.execute("CALL alta_materia_prima(100, 100, 0, 0)")
     cursor.execute("SELECT id FROM materia_prima ORDER BY id DESC LIMIT 1")
     id_mp = cursor.fetchone()['id']
-    
-    cursor.execute("CALL alta_producto('Colision', 'Producto Colision', box(point(0,0), point(10,10)), %s)", 
+    cursor.execute("CALL alta_producto('Colision', 'D', box(point(0,0), point(10,10)), %s)", 
                    (json.dumps([{"nombre_pieza": "P1", "descripcion": "D", "cantidad_elementos": 1, "geometria": "((0,0),(10,0),(10,10),(0,10))"}]),))
-    
-    cursor.execute("SELECT g.id_geometria FROM geometrias g JOIN pieza p ON g.id_pieza = p.id JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'Colision' LIMIT 1")
-    id_geo = cursor.fetchone()['id_geometria']
-    
+    # Necesitamos el ID de la PIEZA para el insert directo
+    cursor.execute("""
+        SELECT g.id_geometria, p.id as id_pieza 
+        FROM geometrias g 
+        JOIN pieza p ON g.id_pieza = p.id 
+        JOIN producto pr ON p.producto_id = pr.id 
+        WHERE pr.nombre = 'Colision' LIMIT 1
+    """)
+    datos = cursor.fetchone()
+    id_geo = datos['id_geometria']
+    id_pieza = datos['id_pieza']
     cursor.execute("INSERT INTO usuario (nombre, rol) VALUES ('Tester', 1) RETURNING id")
     id_user = cursor.fetchone()['id']
-
-    # 2. Insertar primera pieza (Válida)
+    # 2. Insertar primera pieza BIEN 
     cursor.execute("CALL sp_rotar_posicionar_figuras(%s, %s, 0, 10, 10, '{}', %s)", (id_geo, id_mp, id_user))
     
-    # 3. Insertar segunda pieza ENCIMA (Debe fallar)
     with pytest.raises(psycopg2.errors.RaiseException) as excinfo:
-        cursor.execute("CALL sp_rotar_posicionar_figuras(%s, %s, 0, 11, 11, '{}', %s)", (id_geo, id_mp, id_user))
-
+        cursor.execute("""
+            INSERT INTO cortes_planificados (id_materia, id_pieza, id_usuario, geometria_final)
+            VALUES (%s, %s, %s, '((11,11),(21,11),(21,21),(11,21),(11,11))')
+        """, (id_mp, id_pieza, id_user))
+    
 def test_calculo_utilizacion(cursor):
     """Verifica que la función matemática de utilización no de cero."""
     # Insertamos datos manuales para controlar el cálculo
