@@ -20,6 +20,7 @@ CREATE TRIGGER t_validar_geometria_colocacion
 BEFORE INSERT OR UPDATE ON geometrias
 FOR EACH ROW
 EXECUTE FUNCTION tr_validar_colocacion();
+
 CREATE OR REPLACE FUNCTION tr_registrar_ajuste_geometria()
 RETURNS TRIGGER
 AS $$
