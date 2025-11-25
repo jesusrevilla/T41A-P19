@@ -18,13 +18,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT alta_usuario('Uriel', 2);
-SELECT alta_usuario('Coral', 1);
-SELECT alta_usuario('Fernanda', 2);
-SELECT alta_usuario('Bryan', 1);
-SELECT alta_usuario('Yael', 1);
-
-SELECT * FROM usuario;
+----------------------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION baja_usuario(
     usuario_id INTEGER
@@ -40,10 +34,7 @@ BEGIN
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
-
-SELECT baja_usuario(3);
-SELECT * FROM usuario;
-
+------------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION modificar_usuario(
     usuario_id INTEGER,
     nombre_nuevo TEXT,
@@ -62,11 +53,7 @@ BEGIN
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
-
-SELECT modificar_usuario(5,'Andre',1);
-SELECT * FROM usuario ORDER BY id;
-
-
+--------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION consulta_usuario(
     usuario_id INTEGER
 )
@@ -81,5 +68,3 @@ BEGIN
     WHERE usuario_id = u.id ;
 END;
 $$ LANGUAGE plpgsql;
-
-SELECT consulta_usuario(4);
