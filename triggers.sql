@@ -29,7 +29,7 @@ BEGIN
     INSERT INTO evento (id_materiap, id_usuario, fecha_hora, tipo_evento, descripcion)
     VALUES (
         NEW.id_materia,
-        1,
+        NEW.id_usuario,
         NOW(),
         'Corte Planificado',
         jsonb_build_object('id_pieza', NEW.id_pieza, 'area_corte', fn_calcular_area_manual(NEW.geometria_final))
