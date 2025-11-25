@@ -221,16 +221,18 @@ IF v_es_valido THEN
     INSERT INTO cortes_planificados (
         id_materia,
         id_pieza,
+        id_usuario,
         geometria_final
     )
     VALUES (
         p_id_materia_prima,
         v_id_pieza_maestra,
+        p_id_usuario,
         v_geometria_final
     )
     RETURNING id INTO v_corte_id; -- Usamos RETURNING para capturar el ID del corte
 
-    -- NOTA: Como la tabla historial_utilizacion necesita el ID del corte, 
+    -- NOTA: Como la tabla evento necesita el ID del corte, 
     -- usamos la variable v_corte_id en el paso 6.
     
 END IF;
@@ -248,7 +250,8 @@ END IF;
             'validez', v_es_valido,
             'angulo_deg', p_angulo_rot,
             'pos_x', p_pos_x,
-            'pos_y', p_pos_y
+            'pos_y', p_pos_y,
+            'id_corte',v_corte_id
         )
     );
 END;
