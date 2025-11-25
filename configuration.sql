@@ -7,7 +7,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
     GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO admin;
     
-
+---------------------------------------------------------------------------------
 
 CREATE USER operador WITH PASSWORD '456789';
 GRANT CONNECT ON DATABASE test_db TO operador;
