@@ -41,6 +41,10 @@ jobs:
     - name: Wait for PostgreSQL
       run: |
         sleep 10
+        
+    - name: Configuration
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f configuration.sql
 
     - name: Set up database schema and data
       run: |
@@ -50,9 +54,21 @@ jobs:
       run: |
         PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql      
 
-    - name: Query data
+    - name: CRUD functions
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_query_data.sql          
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f functions_CRUD.sql     
+
+    - name: Procedimientos
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f procedimiento.sql   
+
+    - name: Funciones
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f functions.sql 
+
+    - name: Triggers
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f triggers.sql 
 
     - name: Run unit tests
       run: |
