@@ -18,10 +18,7 @@ BEGIN
 END;
 $$;
 
-CALL alta_materia_prima(200, 300, 5, 10);
-CALL alta_materia_prima(300, 260, 4, 11);
-
-SELECT * FROM materia_prima;
+-------------------------------------------------------------------------------------------------
 
 --PROCEDIMIENTO DE ALTA DE PRODUCTO 
 CREATE PROCEDURE alta_producto(nombre TEXT,descripcion TEXT,geometria BOX,piezas JSONB )
@@ -49,30 +46,8 @@ BEGIN
     END LOOP;
 END;
 $$;
-CALL alta_producto('Omnitrix','Producto espacial',box(point(0,0), point(10,5)), 
-    '[{"nombre_pieza": "Correa",
-       "descripcion": "Soporte",
-       "cantidad_elementos": 2,
-       "geometria": "((0,0),(5,0),(5,3),(0,3))"},
-        {"nombre_pieza": "Reloj",
-         "descripcion": "Mecánico",
-         "cantidad_elementos": 1,
-         "geometria": "((0,0),(4,0),(4,2),(0,2))"}]');
-
-CALL alta_producto('La caja','Producto cajil',box(point(0,0), point(10,5)), 
-    '[{"nombre_pieza": "Tapa",
-       "descripcion": "Cubierta",
-       "cantidad_elementos": 2,
-       "geometria": "((0,0),(5,0),(5,3),(0,3))"},
-        {"nombre_pieza": "Recipiente",
-         "descripcion": "Contenedor",
-         "cantidad_elementos": 1,
-         "geometria": "((0,0),(4,0),(4,2),(0,2))"}]');
-
-SELECT * FROM producto;
-SELECT * FROM pieza;
-SELECT * FROM geometrias;
--- FUNCIÓN CRÍTICA DE VALIDACIÓN (USANDO TIPOS NATIVOS)
+---------------------------------------------------------------------------------------------------
+-- FUNCIÓN CRÍTICA DE VALIDACIÓN
 CREATE OR REPLACE FUNCTION fn_validar_colocacion_nativo(
     p_id_geometria_original INT,     -- ID de la geometría base (para identificación)
     p_nueva_geometria_polygon POLYGON, -- La geometría final (POLYGON) a validar
