@@ -44,7 +44,7 @@ jobs:
 
     - name: Set up database schema and data
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ./sql/01_create_tables.sql
 
     - name: Insert data
       run: |
