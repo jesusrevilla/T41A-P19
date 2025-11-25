@@ -23,6 +23,8 @@ BEFORE INSERT ON cortes_planificados
 FOR EACH ROW
 EXECUTE FUNCTION tr_validar_antes_de_corte();
 
+--------------------------------------------------------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION tr_auditoria_cortes()
 RETURNS TRIGGER AS $$
 BEGIN
