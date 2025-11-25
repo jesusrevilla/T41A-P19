@@ -80,7 +80,7 @@ def test_alta_materia_y_producto(cursor):
     # Verificar que se crearon la pieza y la geometría
     cursor.execute(
         "SELECT p.id, g.id_geometria FROM pieza p JOIN geometrias g ON p.id = g.id_pieza "
-        "JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'ProductoPython'"
+        "JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'Reloj'"
     )
     resultado = cursor.fetchone()
     assert resultado is not None, "No se generaron las piezas o geometrías correctamente"
@@ -92,7 +92,7 @@ def test_logica_corte_valido(cursor):
     id_mp = cursor.fetchone()['id']
     cursor.execute("CALL alta_producto('Valido', 'Producto Valido', box(point(0,0), point(10,10)), %s)", 
                    (json.dumps([{"nombre_pieza": "P1", "descripcion": "D", "cantidad_elementos": 1, "geometria": "((0,0),(10,0),(10,10),(0,10))"}]),))
-    cursor.execute("SELECT g.id_geometria FROM geometrias g JOIN pieza p ON g.id_pieza = p.id JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'ProdValid' LIMIT 1")
+    cursor.execute("SELECT g.id_geometria FROM geometrias g JOIN pieza p ON g.id_pieza = p.id JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'Valido' LIMIT 1")
     id_geo = cursor.fetchone()['id_geometria']
     
     # Crear usuario 
@@ -118,7 +118,7 @@ def test_logica_colision_trigger(cursor):
     cursor.execute("CALL alta_producto('Colision', 'Producto Colision', box(point(0,0), point(10,10)), %s)", 
                    (json.dumps([{"nombre_pieza": "P1", "descripcion": "D", "cantidad_elementos": 1, "geometria": "((0,0),(10,0),(10,10),(0,10))"}]),))
     
-    cursor.execute("SELECT g.id_geometria FROM geometrias g JOIN pieza p ON g.id_pieza = p.id JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'ProdColision' LIMIT 1")
+    cursor.execute("SELECT g.id_geometria FROM geometrias g JOIN pieza p ON g.id_pieza = p.id JOIN producto pr ON p.producto_id = pr.id WHERE pr.nombre = 'Colision' LIMIT 1")
     id_geo = cursor.fetchone()['id_geometria']
     
     cursor.execute("INSERT INTO usuario (nombre, rol) VALUES ('Tester', 1) RETURNING id")
