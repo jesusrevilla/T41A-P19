@@ -44,16 +44,16 @@ jobs:
 
     - name: Set up database schema and data
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 01_create_tables.sql
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ./sql/01_create_tables.sql
 
     - name: Insert data
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 02_insert_data.sql      
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ./sql/02_insert_data.sql      
 
     - name: Query data
       run: |
-        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f 03_query_data.sql          
+        PGPASSWORD=postgres psql -h localhost -U postgres -d test_db -f ./sql/03_query_data.sql          
 
-    - name: Run unit tests
+    - name: Run Python unit tests
       run: |
-        pytest -vv
+        pytest -vv test/test_logic.py
